@@ -1,49 +1,12 @@
 const express = require("express");
 const router = express.Router();
-
-const getDecision = require("../utils/decisionEngine");
+const { submitTest } = require("../controllers/testController");
 const LearningSession = require("../models/LearningSession");
 const User = require("../models/User");
 
 //SUBMIT
-router.post("/submit", async (req, res) => {
-  const { userId, topic, answers } = req.body;
 
-if (!answers || answers.length === 0) {
-  return res.status(400).json({
-    error: "Answers cannot be empty"
-  });
-}
-  const total = answers.length;
-  const correct = answers.filter(a => a.isCorrect).length;
-  const score = (correct / total) * 100;
-  const result = getDecision(score, answers);
-
-  try {
-    const session = new LearningSession({
-      userId,
-      topic,
-      score,
-      weakAreas: result.weakAreas,
-      decision: result.decision,
-
-    });
-
-    await session.save();
-
-    res.json({
-      score,
-      weakAreas: result.weakAreas,
-      decision: result.decision,
-      message: `You should ${result.decision} this topic`
-    });
-
-  } catch (err) {
-    console.error("DB ERROR:", err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
+router.post("/submit", submitTest);
 //  PROGRESS
 router.get("/progress/:userId", async (req, res) => {
   const { userId } = req.params;

@@ -11,7 +11,6 @@ const getDecision = (score, answers) => {
     decision = "advance";
   }
 
-  // weak areas निकालना
   answers.forEach((ans) => {
     if (!ans.isCorrect) {
       weakAreas.push(ans.concept);
