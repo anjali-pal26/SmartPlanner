@@ -5,14 +5,18 @@ const getDecision = require("../utils/decisionEngine");
 const LearningSession = require("../models/LearningSession");
 const User = require("../models/User");
 
-// ✅ SUBMIT
+//SUBMIT
 router.post("/submit", async (req, res) => {
   const { userId, topic, answers } = req.body;
 
+if (!answers || answers.length === 0) {
+  return res.status(400).json({
+    error: "Answers cannot be empty"
+  });
+}
   const total = answers.length;
   const correct = answers.filter(a => a.isCorrect).length;
   const score = (correct / total) * 100;
-
   const result = getDecision(score, answers);
 
   try {
@@ -40,7 +44,7 @@ router.post("/submit", async (req, res) => {
   }
 });
 
-// ✅ PROGRESS
+//  PROGRESS
 router.get("/progress/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -64,7 +68,7 @@ router.get("/progress/:userId", async (req, res) => {
   }
 });
 
-// ✅ RECOVERY
+//RECOVERY
 router.get("/recovery/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -96,7 +100,6 @@ router.get("/recovery/:userId", async (req, res) => {
   }
 });
 
-// ✅ CREATE USER (यह भी add करो)
 router.post("/create-user", async (req, res) => {
   const { name, email } = req.body;
 
@@ -108,6 +111,4 @@ router.post("/create-user", async (req, res) => {
     res.status(500).json({ error: "User creation failed" });
   }
 });
-
-// ✅ LAST LINE
 module.exports = router;
